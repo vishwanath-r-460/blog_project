@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ post.title }} - My Blog Project</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f9;
+            color: #333;
+        }
+        header {
+            background-color: #007bff;
+            color: white;
+            padding: 15px 20px;
+            text-align: center;
+        }
+        nav {
+            background: #333;
+            padding: 10px;
+            text-align: center;
+        }
+        nav a {
+            color: white;
+            margin: 0 15px;
+            text-decoration: none;
+            font-weight: bold;
+        }
+        nav a:hover {
+            text-decoration: underline;
+        }
+        .container {
+            width: 80%;
+            margin: auto;
+            padding: 20px;
+        }
+        .post {
+            background: white;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0px 2px 5px rgba(0,0,0,0.1);
+        }
+        .timestamp {
+            color: #555;
+            font-size: 0.9em;
+            margin-top: 10px;
+        }
+        .actions {
+            margin-top: 15px;
+        }
+        .actions a, .actions form button {
+            display: inline-block;
+            padding: 8px 12px;
+            margin-right: 10px;
+            border-radius: 4px;
+            text-decoration: none;
+            font-size: 0.9em;
+            font-weight: bold;
+        }
+        .actions a {
+            background: #28a745;
+            color: white;
+        }
+        .actions a:hover {
+            background: #218838;
+        }
+        .actions form button {
+            background: #dc3545;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        .actions form button:hover {
+            background: #c82333;
+        }
+        footer {
+            background: #333;
+            color: white;
+            text-align: center;
+            padding: 10px;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>{{ post.title }}</h1>
+    </header>
+
+    <nav>
+        <a href="/">Home</a>
+        <a href="/about">About</a>
+        <a href="/contact">Contact</a>
+        <a href="/create">➕ Create Post</a>
+    </nav>
+
+    <div class="container">
+        <div class="post">
+            <h2>{{ post.title }}</h2>
+            <p>{{ post.content }}</p>
+            <p class="timestamp">📅 Posted on {{ post.created_at.strftime('%d %b %Y, %I:%M %p') }}</p>
+            <p class="timestamp">✏️ Last updated on {{ post.updated_at.strftime('%d %b %Y, %I:%M %p') }}</p>
+
+            <div class="actions">
+                <a href="{{ url_for('edit', post_id=post.id) }}">✏️ Edit</a>
+                <form action="{{ url_for('delete', post_id=post.id) }}" method="POST" style="display:inline;">
+                    <button type="submit">❌ Delete</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <p>&copy; 2025 My Blog Project</p>
+    </footer>
+</body>
+</html>
