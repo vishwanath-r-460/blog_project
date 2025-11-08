@@ -5,15 +5,24 @@ import os
 
 app = Flask(__name__)
 
-# Database setup (SQLite file: blog.db)
-if os.environ.get("EB_ENV"):  # Running in Elastic Beanstalk
-    db_path = "/tmp/blog.db"
-else:  # Running locally
+# Database setup (SQLite file)
+# EB cannot write to the project folder, so use /tmp in EB
+if os.environ.get("AWS_EXECUTION_ENV"):
+    db_path = "/tmp/blog.db"       # EB-safe writable path
+else:
     db_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "blog.db")
 
 app.config['SQLALCHEMY_DATABASE_URI'] = f"sqlite:///{db_path}"
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+
 db = SQLAlchemy(app)
+
+# Auto-create tables in BOTH local + EB
+@app.before_first_request
+def init_db():
+    with app.app_context():
+        db.create_all()
+
 
 # Database model
 class Post(db.Model):
@@ -22,6 +31,7 @@ class Post(db.Model):
     content = db.Column(db.Text, nullable=False)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+
 
 # Routes
 @app.route('/')
@@ -71,7 +81,8 @@ def delete(post_id):
     db.session.commit()
     return redirect(url_for("home"))
 
-# For Elastic Beanstalk WSGI
+
+# WSGI for Elastic Beanstalk
 application = app
 
 if __name__ == "__main__":
